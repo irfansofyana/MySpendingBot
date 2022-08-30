@@ -10,9 +10,10 @@ My personal telegram bot assistant to record my spending. This bot IS built usin
 - [ ] Update Spending
 - [ ] Delete Spending
 - [ ] Bot Settings
+- [x] Automated reminder telegram message to record spending
 
 ## Demo
-<TBA>
+TBA
 
-## How to create the same bot for my usage?
-<TBA>
+## Setup
+TBA
