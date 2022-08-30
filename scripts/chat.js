@@ -15,3 +15,25 @@ function getLastChatHistory() {
     data: rng[0][3],
   }
 }
+
+function getLastNChatHistory(n) {
+  const sheet = SpreadsheetApp.getActive().getSheetByName("Chat History")
+  const lastRow = sheet.getLastRow()
+
+  let data = []
+  if (lastRow-n <= 0) {
+    return data
+  }
+
+  const rng = sheet.getRange(lastRow-n+1, 1, n, 4).getValues()
+  for (let i = 0; i < rng.length; i++) {
+    data.push({
+      timestamp: rng[i][0],
+      sender: rng[i][1],
+      type: rng[i][2],
+      data: rng[i][3],
+    })
+  }
+
+  return data
+}
