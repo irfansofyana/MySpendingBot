@@ -52,10 +52,7 @@ function handleCallbackQuery(callback_query) {
   }
 
   if (data.includes("lastSpending")) {
-    const nLastSpendingReq = parseInt(data.replace("lastSpending", ""))
-    const lastNSpendings = getLastNSpendingLogs(nLastSpendingReq)
-    const spendingsTable = spendingLogsAsTable(lastNSpendings)
-    sendMessage(bossTelegramID, spendingsTable)
+    handleGetLastNSpending(data)
   }
 
   addChatHistory(fromID, "callback_query", data)
@@ -114,9 +111,23 @@ function handleRegularMessage(contents) {
     return
   }
 
-  const replyText = `This is default handler to reply for your message: "${textMsg}"`
+  const replyText = "Sorry boss, I don't understand what you mean😅🙏"
   sendMessage(chatID, replyText)
 }
+
+function handleGetLastNSpending(data){
+  const nLastSpendingReq = parseInt(data.replace("lastSpending", ""))
+  const lastNSpendings = getLastNSpendingLogs(nLastSpendingReq)
+  const spendingsTable = spendingLogsAsTable(lastNSpendings)
+  
+  sendMessage(bossTelegramID, spendingsTable)
+}
+
+function handleStartCommand(contents) {
+  const chatID = contents.message.chat.id
+  sendMessage(chatID, "🙇‍♂️ What do you want sir? 🙇‍♂️", mainKeyboard)
+}
+
 
 function isDailySpendingChat(chat_history) {
   return chat_history.type === "callback_query" && chat_history.data === addSpendingCommand.DailySpending
@@ -144,27 +155,6 @@ function isHelpCommand(txtMsg) {
 
 function isValidSender(chatID) {
   return chatID === bossTelegramID
-}
-
-function sendUnauthorizedMessage(chatID) {
-  sendMessage(chatID, "❌🚫❌ You're unauthorized sender! I will not received order from you ❌🚫❌")
-}
-
-function sendSpendingCategoriesMessage(chatID) {
-  const categories = getSpendingCategoriesList()
-  const keyboard = categories.map((el) => [
-    {
-      "text": el,
-      "callback_data": `spendingCategory${el}`
-    }
-  ])
-
-  sendMessage(chatID, "choose the spending category please", {"inline_keyboard": keyboard})
-}
-
-function handleStartCommand(contents) {
-  const chatID = contents.message.chat.id
-  sendMessage(chatID, "🙇‍♂️ What do you want sir? 🙇‍♂️", mainKeyboard)
 }
 
 function savePostRequestToSheet(request) {

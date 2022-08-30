@@ -1,7 +1,5 @@
-const telegramBaseURL = "https://api.telegram.org/bot"
-const telegramToken = "YOUR_TELEGRAM_TOKEN" // change this with your own telegram bot token
-const telegramURLToken = `${telegramBaseURL}${telegramToken}`
 const webAppURL = "https://script.google.com/macros/s/AKfycbwAeJP9EiOhs-QXj223laLhi7oDr43k9yYgi1GRqo27zTBhX8fDt6sMMeCdqzxo8vSO/exec"
+
 const bossTelegramID = 750049804
 
 const mainCommand = {
