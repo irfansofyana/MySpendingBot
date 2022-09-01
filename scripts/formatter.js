@@ -17,7 +17,7 @@ function spendingLogsAsTable(spendingLogs) {
 
     charsEachColumn[0] = Math.max(charsEachColumn[0], spendingDate.length)
     charsEachColumn[1] = Math.max(charsEachColumn[1], name.length)
-    charsEachColumn[3] = Math.max(charsEachColumn[3], amountStr.length)
+    charsEachColumn[2] = Math.max(charsEachColumn[2], amountStr.length)
   }
 
   let tableStr = ''
