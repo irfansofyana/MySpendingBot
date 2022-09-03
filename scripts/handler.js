@@ -26,8 +26,8 @@ function handleCallbackQuery(callback_query) {
     {sender: fromID, check: isGetNLastSpendingCallback, responses: ["Choose how many last spending you want to see?", getNLastSpendingKeyboard]},
     {sender: fromID, check: isGetTotalSpendingCallback, responses: ["Since when do you want to see the total spending?", getTotalSpendingKeyboard]},
     {sender: fromID, check: isGetSpendingCallback, responses: ["Please choose one", getSpendingKeyboard]},
-    {sender: fromID, check: isUpdateSpendingCallback, responses: ["Update spending feature not yet implemented!"]},
-    {sender: fromID, check: isDeleteSpendingCallback, responses: ["Delete spending feature not yet implemented!"]},
+    {sender: fromID, check: isUpdateSpendingCallback, responses: [updateSpendingMessage()]},
+    {sender: fromID, check: isDeleteSpendingCallback, responses: [deleteSpendingMessage()]},
     {sender: fromID, check: isSpendingCategoriesCallback, responses: ["How much this spending is?"]},
     {sender: fromID, check: isLastSpendingCallback, callback_handler: handleGetLastNSpendingCallback},
     {sender: fromID, check: isTotalSpendingCallback, callback_handler: handleTotalSpendingCallback}
@@ -124,6 +124,18 @@ function handleTotalSpendingCallback(handler, data) {
   const totalSpendingMessage = composeTotalSpendingMessage(totalSpendings)
   
   sendMessage(handler.sender, totalSpendingMessage)
+}
+
+function updateSpendingMessage() {
+  const spendingLogsURL = SpreadsheetApp.getActive().getUrl()
+  const message = `Please go to ${spendingLogsURL} to update your spending directly 🙏`
+  return message
+} 
+
+function deleteSpendingMessage() {
+  const spendingLogsURL = SpreadsheetApp.getActive().getUrl()
+  const message = `Please go to ${spendingLogsURL} to delete your spending directly 🙏`
+  return message
 }
 
 function handleRegularMessage(contents) {
