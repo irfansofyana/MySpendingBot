@@ -119,10 +119,3 @@ function getTotalSpendingsToday() {
 
   return totalSpendingBetweenDate(startOfTheDay, now)
 }
-
-function testGetSpendings() {
-  // const today = new Date()
-  // const yesterday = new Date(today)
-  // yesterday.setDate(yesterday.getDate() - 7)
-  console.log(getTotalSpendingsToday())
-}
