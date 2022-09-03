@@ -67,3 +67,18 @@ function spendingLogsAsTable(spendingLogs) {
 
   return tableStr
 }
+
+
+function composeTotalSpendingMessage(totalSpendings) {
+  let strMessage = `🙈💸 Total Spendings💸🙈\n`
+  strMessage += `\n📆 Start Date: ${totalSpendings.startDate.toDateString()}`
+  strMessage += `\n📆 End Date: ${totalSpendings.endDate.toDateString()}\n`
+
+  strMessage += `\n<b>Total Spendings: Rp. ${totalSpendings.total}</b>\n`
+
+  strMessage += '\nBy Categories:\n'
+  for (const category in totalSpendings.byCategories) {
+    strMessage += `- ${category}: \tRp. ${totalSpendings.byCategories[category]}\n`
+  }
+  return strMessage
+}
