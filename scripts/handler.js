@@ -135,7 +135,7 @@ function handleRegularMessage(contents) {
   const last5Msg = getLastNChatHistory(5)
 
   if (isDescriptionSpendingChat(last5Msg)) {
-    handleDescriptionSpendingChat(last5Msg)
+    handleDescriptionSpendingChat(chatID, last5Msg)
     return
   }
 
@@ -176,7 +176,7 @@ function isValidSender(chatID) {
   return chatID === bossTelegramID
 }
 
-function handleDescriptionSpendingChat(last5Msg) {
+function handleDescriptionSpendingChat(chatID, last5Msg) {
   const data = {
     name: last5Msg[1].data,
     category: last5Msg[2].data.replace("spendingCategory", ""),
