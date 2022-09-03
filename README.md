@@ -1,16 +1,13 @@
 # MySpendingBot
 
-My personal telegram bot assistant to record my spending. This bot IS built using Telegram Bot, Telegram API, and Google App script.
+My personal telegram bot assistant to record my spending. The bot is built using Telegram API, Google sheets, and Google App Script.
 
-## Dream Features
-- [x] Record Daily Spending
-- [ ] Record Recurring Spending
-- [x] Get Some Last Spending
-- [ ] Total Spending in some period
-- [ ] Update Spending
-- [ ] Delete Spending
-- [ ] Bot Settings
-- [x] Automated reminder telegram message to record spending
+## Current Features
+- Record daily spending
+- Get n-last spendings where `n` can be 5, 10, 15
+- Get total spending, since today, 3 days ago, 7 days ago, 30 days ago
+- Automated message to record daily spending every 6 hours
+- Send the spreadsheet link to update/delete spending
 
 ## Demo
 TBA
