@@ -63,3 +63,66 @@ function getLastNSpendingLogs(n) {
 
   return data
 }
+
+function getNumberOfSpendings() {
+  const sheet = SpreadsheetApp.getActive().getSheetByName("Spending Logs")
+  const lastRow = sheet.getLastRow()
+
+  return lastRow-1
+}
+
+function getAllSpendings() {
+  const numOfSpendings = getNumberOfSpendings()
+  const data = getLastNSpendingLogs(numOfSpendings)
+
+  return data
+}
+
+function getSpendingsBetweenDate(startDate, endDate) {
+  const allSpendings = getAllSpendings()
+
+  return allSpendings.filter((spending) => isInDateInclusive(spending.timestamp, startDate, endDate))
+}
+
+function isInDateInclusive(d, startDate, endDate) {
+  return (d >= startDate && d <= endDate)
+}
+
+function totalSpendingBetweenDate(startDate, endDate) {
+  const spendings = getSpendingsBetweenDate(startDate, endDate)
+  let spendingByCategories = {}
+  let totalSpending = 0
+
+  spendings.forEach((spending) => {
+    if (spending.category in spendingByCategories) {
+      spendingByCategories[spending.category] += spending.amount
+    } else {
+      spendingByCategories[spending.category] = spending.amount
+    }
+
+    totalSpending += spending.amount
+  })
+
+  return {
+    startDate: startDate,
+    endDate: endDate,
+    total: totalSpending,
+    byCategories: spendingByCategories
+  }
+}
+
+function getTotalSpendingsToday() {
+  const now = new Date()
+  
+  let startOfTheDay = new Date(now)
+  startOfTheDay.setHours(0, 0, 0)
+
+  return totalSpendingBetweenDate(startOfTheDay, now)
+}
+
+function testGetSpendings() {
+  // const today = new Date()
+  // const yesterday = new Date(today)
+  // yesterday.setDate(yesterday.getDate() - 7)
+  console.log(getTotalSpendingsToday())
+}

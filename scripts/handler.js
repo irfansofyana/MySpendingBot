@@ -24,11 +24,13 @@ function handleCallbackQuery(callback_query) {
     {sender: fromID, check: isAddDailySpendingCallback, responses: ["What do you want to call this spending?"]},
     {sender: fromID, check: isAddRecurringSpendingCallback, responses: ["Add recurring spending is not yet implemented!"]},
     {sender: fromID, check: isGetNLastSpendingCallback, responses: ["Choose how many last spending you want to see?", getNLastSpendingKeyboard]},
+    {sender: fromID, check: isGetTotalSpendingCallback, responses: ["Since when do you want to see the total spending?", getTotalSpendingKeyboard]},
     {sender: fromID, check: isGetSpendingCallback, responses: ["Please choose one", getSpendingKeyboard]},
     {sender: fromID, check: isUpdateSpendingCallback, responses: ["Update spending feature not yet implemented!"]},
     {sender: fromID, check: isDeleteSpendingCallback, responses: ["Delete spending feature not yet implemented!"]},
     {sender: fromID, check: isSpendingCategoriesCallback, responses: ["How much this spending is?"]},
-    {sender: fromID, check: isLastSpendingCallback, callback_handler: handleGetLastNSpending}
+    {sender: fromID, check: isLastSpendingCallback, callback_handler: handleGetLastNSpendingCallback},
+    {sender: fromID, check: isTotalSpendingCallback, callback_handler: handleTotalSpendingCallback}
   ]
 
   handlers.forEach((handler) => {
@@ -57,6 +59,10 @@ function isGetNLastSpendingCallback(data) {
   return data === getSpendingCommand.GetNLastSpending
 }
 
+function isGetTotalSpendingCallback(data) {
+  return data === getSpendingCommand.GetTotalSpending
+}
+
 function isGetSpendingCallback(data) {
   return data === mainSpendingCommand.GetSpending
 }
@@ -77,6 +83,10 @@ function isLastSpendingCallback(data) {
   return data.includes("lastSpending")
 }
 
+function isTotalSpendingCallback(data) {
+  return data.includes("totalSpending")
+}
+
 function sendCallbackResponse(handler, data) {
   if (handler.callback_handler) {
     handler.callback_handler(handler, data)
@@ -91,12 +101,29 @@ function sendCallbackResponse(handler, data) {
   }
 }
 
-function handleGetLastNSpending(handler, data){
+function handleGetLastNSpendingCallback(handler, data){
   const nLastSpendingReq = parseInt(data.replace("lastSpending", ""))
   const lastNSpendings = getLastNSpendingLogs(nLastSpendingReq)
   const spendingsTable = spendingLogsAsTable(lastNSpendings)
   
   sendMessage(handler.sender, spendingsTable)
+}
+
+function handleTotalSpendingCallback(handler, data) {
+  const now = new Date()
+  const daysToLookUp = parseInt(data.replace("totalSpending", ""))
+
+  let startDateToLookUp = new Date(now)
+  startDateToLookUp.setDate(startDateToLookUp.getDate() - daysToLookUp)
+  
+  let totalSpendings = getTotalSpendingsToday()
+  if (daysToLookUp != 0) {
+    totalSpendings = totalSpendingBetweenDate(startDateToLookUp, now)
+  }
+
+  const totalSpendingMessage = composeTotalSpendingMessage(totalSpendings)
+  
+  sendMessage(handler.sender, totalSpendingMessage)
 }
 
 function handleRegularMessage(contents) {

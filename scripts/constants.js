@@ -14,22 +14,6 @@ const mainSpendingCommand = {
   DeleteSpending: "deleteSpending",
 }
 
-const addSpendingCommand = {
-  DailySpending: "addDailySpending",
-  RecurringSpending: "addRecurringSpending",
-}
-
-const getSpendingCommand = {
-  GetNLastSpending: 'getNLastSpending',
-  GetTotalSpending: 'getTotalSpending',
-}
-
-const getNLastSpendingCommand = {
-  Last5Spending: 'lastSpending5',
-  Last10Spending: 'lastSpending10',
-  Last15Spending: 'lastSpending15'
-}
-
 const mainKeyboard = {
   "inline_keyboard": [
     [
@@ -59,6 +43,11 @@ const mainKeyboard = {
   ],
 };
 
+const addSpendingCommand = {
+  DailySpending: "addDailySpending",
+  RecurringSpending: "addRecurringSpending",
+}
+
 const addSpendingKeyboard = {
   "inline_keyboard": [
     [
@@ -76,6 +65,11 @@ const addSpendingKeyboard = {
   ]
 }
 
+const getSpendingCommand = {
+  GetNLastSpending: 'getNLastSpending',
+  GetTotalSpending: 'getTotalSpending',
+}
+
 const getSpendingKeyboard = {
   "inline_keyboard": [
     [
@@ -87,10 +81,16 @@ const getSpendingKeyboard = {
     [
       {
         "text": "⌨️ Get total spending",
-        "callback_data": getSpendingCommand.GetNLastSpending,
+        "callback_data": getSpendingCommand.GetTotalSpending,
       }
     ]
   ]
+}
+
+const getNLastSpendingCommand = {
+  Last5Spending: 'lastSpending5',
+  Last10Spending: 'lastSpending10',
+  Last15Spending: 'lastSpending15'
 }
 
 const getNLastSpendingKeyboard = {
@@ -111,6 +111,43 @@ const getNLastSpendingKeyboard = {
       {
         "text": "15",
         "callback_data":  getNLastSpendingCommand.Last15Spending,
+      }
+    ]
+  ]
+}
+
+const getTotalSpendingCommand = {
+  SinceToday: 'totalSpending0',
+  Since3DaysAgo: 'totalSpending3',
+  Since7DaysAgo: 'totalSpending7',
+  Since14DaysAgo: 'totalSpending14',
+  Since30DaysAgo: 'totalSpending30'
+}
+
+const getTotalSpendingKeyboard = {
+"inline_keyboard": [
+    [
+      {
+        "text": "Since today",
+        "callback_data": getTotalSpendingCommand.SinceToday,
+      }
+    ],
+    [
+      {
+        "text": "Since 3 days ago",
+        "callback_data":  getTotalSpendingCommand.Since3DaysAgo,
+      }
+    ],
+    [
+      {
+        "text": "Since 7 days ago",
+        "callback_data":  getTotalSpendingCommand.Since7DaysAgo,
+      }
+    ],
+    [
+      {
+        "text": "Since 30 days ago",
+        "callback_data":  getTotalSpendingCommand.Since30DaysAgo,
       }
     ]
   ]
