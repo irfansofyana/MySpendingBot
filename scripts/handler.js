@@ -18,44 +18,85 @@ function handleCallbackQuery(callback_query) {
     sendUnauthorizedMessage(fromID)
     return
   }
-  
-  if (data === mainSpendingCommand.AddSpending) {
-    sendMessage(fromID, "Please choose one", addSpendingKeyboard)
-  }
 
-  if (data === addSpendingCommand.DailySpending) {
-    sendMessage(fromID, "What do you want to call this spending?")
-  }
+  const handlers = [
+    {sender: fromID, check: isAddSpendingCallback, responses: ["Please choose one", addSpendingKeyboard]},
+    {sender: fromID, check: isAddDailySpendingCallback, responses: ["What do you want to call this spending?"]},
+    {sender: fromID, check: isAddRecurringSpendingCallback, responses: ["Add recurring spending is not yet implemented!"]},
+    {sender: fromID, check: isGetNLastSpendingCallback, responses: ["Choose how many last spending you want to see?", getNLastSpendingKeyboard]},
+    {sender: fromID, check: isGetSpendingCallback, responses: ["Please choose one", getSpendingKeyboard]},
+    {sender: fromID, check: isUpdateSpendingCallback, responses: ["Update spending feature not yet implemented!"]},
+    {sender: fromID, check: isDeleteSpendingCallback, responses: ["Delete spending feature not yet implemented!"]},
+    {sender: fromID, check: isSpendingCategoriesCallback, responses: ["How much this spending is?"]},
+    {sender: fromID, check: isLastSpendingCallback, callback_handler: handleGetLastNSpending}
+  ]
 
-  if (data === addSpendingCommand.RecurringSpending) {
-    sendMessage(fromID, "Add recurring spending is not yet implemented!")
-  }
-
-  if (data === getSpendingCommand.GetNLastSpending) {
-    sendMessage(fromID, "Choose how many last spending you want to see?", getNLastSpendingKeyboard)
-  }
-  
-  if (data === mainSpendingCommand.GetSpending) {
-    sendMessage(fromID, "Please choose one", getSpendingKeyboard)
-  }
-
-  if (data === mainSpendingCommand.UpdateSpending) {
-    sendMessage(fromID, "Update spending feature not yet implemented!")
-  }
-
-  if (data === mainSpendingCommand.DeleteSpending) {
-    sendMessage(fromID, "Delete spending feature not yet implemented!")
-  }
-
-  if (data.includes("spendingCategory")) {
-    sendMessage(fromID, "How much this spending is?")
-  }
-
-  if (data.includes("lastSpending")) {
-    handleGetLastNSpending(data)
-  }
+  handlers.forEach((handler) => {
+    if (handler.check(data)) {
+      sendCallbackResponse(handler, data)
+      return
+    }
+  })
 
   addChatHistory(fromID, "callback_query", data)
+}
+
+function isAddSpendingCallback(data) {
+  return data === mainSpendingCommand.AddSpending
+}
+
+function isAddDailySpendingCallback(data) {
+  return data === addSpendingCommand.DailySpending
+}
+
+function isAddRecurringSpendingCallback(data) {
+  return data === addSpendingCommand.RecurringSpending
+}
+
+function isGetNLastSpendingCallback(data) {
+  return data === getSpendingCommand.GetNLastSpending
+}
+
+function isGetSpendingCallback(data) {
+  return data === mainSpendingCommand.GetSpending
+}
+
+function isUpdateSpendingCallback(data) {
+  return data === mainSpendingCommand.UpdateSpending
+}
+
+function isDeleteSpendingCallback(data) {
+  return data === mainSpendingCommand.DeleteSpending
+}
+
+function isSpendingCategoriesCallback(data) {
+  return data.includes("spendingCategory")
+}
+
+function isLastSpendingCallback(data) {
+  return data.includes("lastSpending")
+}
+
+function sendCallbackResponse(handler, data) {
+  if (handler.callback_handler) {
+    handler.callback_handler(handler, data)
+  }
+
+  if (handler.responses.length === 1) {
+    sendMessage(handler.sender, handler.responses[0])
+  }
+
+  if (handler.responses.length === 2) {
+    sendMessage(handler.sender, handler.responses[0], handler.responses[1])
+  }
+}
+
+function handleGetLastNSpending(handler, data){
+  const nLastSpendingReq = parseInt(data.replace("lastSpending", ""))
+  const lastNSpendings = getLastNSpendingLogs(nLastSpendingReq)
+  const spendingsTable = spendingLogsAsTable(lastNSpendings)
+  
+  sendMessage(handler.sender, spendingsTable)
 }
 
 function handleRegularMessage(contents) {
@@ -70,36 +111,6 @@ function handleRegularMessage(contents) {
   const lastMsg = getLastChatHistory()
   
   addChatHistory(chatID, "message", textMsg)
-  
-  if (isDailySpendingChat(lastMsg)) {
-    // textMsg is the answer for "What do you want to call this spending?" question
-    sendSpendingCategoriesMessage(chatID)
-    return
-  }
-
-  if (isAmountSpendingChat(lastMsg)) {
-    // textMsg is the amount of spending
-    sendMessage(chatID, `Do you want to add some description?`) 
-    return
-  }
-
-  const last5Msg = getLastNChatHistory(5)
-
-  if (isDescriptionSpendingChat(last5Msg)) {
-    // textMsg is the description of the spending
-    const data = {
-      name: last5Msg[1].data,
-      category: last5Msg[2].data.replace("spendingCategory", ""),
-      amount: last5Msg[3].data,
-      description: last5Msg[4].data,
-    }
-    
-    addSpendingLogs(data)
-
-    sendMessage(chatID, "✅ Your spending is recorded! ✅") 
-
-    return
-  }
 
   if (isStartCommand(textMsg)) {
     handleStartCommand(contents)
@@ -110,24 +121,32 @@ function handleRegularMessage(contents) {
     sendMessage(chatID, "To use this bot, you can try send message /start")
     return
   }
-
-  const replyText = "Sorry boss, I don't understand what you mean😅🙏"
-  sendMessage(chatID, replyText)
-}
-
-function handleGetLastNSpending(data){
-  const nLastSpendingReq = parseInt(data.replace("lastSpending", ""))
-  const lastNSpendings = getLastNSpendingLogs(nLastSpendingReq)
-  const spendingsTable = spendingLogsAsTable(lastNSpendings)
   
-  sendMessage(bossTelegramID, spendingsTable)
+  if (isDailySpendingChat(lastMsg)) {
+    sendSpendingCategoriesMessage(chatID)
+    return
+  }
+
+  if (isAmountSpendingChat(lastMsg)) {
+    sendMessage(chatID, `Do you want to add some description?`) 
+    return
+  }
+
+  const last5Msg = getLastNChatHistory(5)
+
+  if (isDescriptionSpendingChat(last5Msg)) {
+    handleDescriptionSpendingChat(last5Msg)
+    return
+  }
+
+  const defaultReply = "Sorry boss, I don't understand what you mean😅🙏"
+  sendMessage(chatID, defaultReply)
 }
 
 function handleStartCommand(contents) {
   const chatID = contents.message.chat.id
   sendMessage(chatID, "🙇‍♂️ What do you want sir? 🙇‍♂️", mainKeyboard)
 }
-
 
 function isDailySpendingChat(chat_history) {
   return chat_history.type === "callback_query" && chat_history.data === addSpendingCommand.DailySpending
@@ -155,6 +174,19 @@ function isHelpCommand(txtMsg) {
 
 function isValidSender(chatID) {
   return chatID === bossTelegramID
+}
+
+function handleDescriptionSpendingChat(last5Msg) {
+  const data = {
+    name: last5Msg[1].data,
+    category: last5Msg[2].data.replace("spendingCategory", ""),
+    amount: last5Msg[3].data,
+    description: last5Msg[4].data,
+  }
+  
+  addSpendingLogs(data)
+
+  sendMessage(chatID, "✅ Your spending is recorded! ✅") 
 }
 
 function savePostRequestToSheet(request) {

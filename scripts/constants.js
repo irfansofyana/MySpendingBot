@@ -40,19 +40,19 @@ const mainKeyboard = {
     ],
     [
       {
-        "text": "🧾 Get Spending",
+        "text": "🧾 Get spending",
         "callback_data":mainSpendingCommand.GetSpending,
       },
     ],
     [
       {
-        "text": "✏️ Update Spending",
+        "text": "✏️ Update spending",
         "callback_data":mainSpendingCommand.UpdateSpending,
       },
     ],
     [  
       {
-        "text": "❌ Delete Spending",
+        "text": "❌ Delete spending",
         "callback_data":mainSpendingCommand.DeleteSpending,
       },
     ],

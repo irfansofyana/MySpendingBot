@@ -1,3 +1,13 @@
+function formattedDateFromTimestamp(timestamp) {
+  const year = timestamp.getFullYear();
+  let month = timestamp.getMonth() + 1
+  month = ('0' + month).slice(-2);
+  let date = timestamp.getDate();
+  date = ('0' + date).slice(-2);
+
+  return `${year}-${month}-${date}`
+}
+
 function spendingLogsAsTable(spendingLogs) {
   const colsHeader = ["Date", "Name", "Amount"]
 
@@ -6,13 +16,7 @@ function spendingLogsAsTable(spendingLogs) {
   for (let i = 0; i < spendingLogs.length; i++) {
     const {timestamp, name, amount} = spendingLogs[i]
 
-    const year = timestamp.getFullYear();
-    let month = timestamp.getMonth() + 1
-    month = ('0' + month).slice(-2);
-    let date = timestamp.getDate();
-    date = ('0' + date).slice(-2);
-
-    const spendingDate = `${year}-${month}-${date}`
+    const spendingDate = formattedDateFromTimestamp(timestamp)
     const amountStr = `${amount}`
 
     charsEachColumn[0] = Math.max(charsEachColumn[0], spendingDate.length)
@@ -26,42 +30,36 @@ function spendingLogsAsTable(spendingLogs) {
   for (let i = 0; i < spendingLogs.length + 2; i++) {
     for (let j = 0; j < colsHeader.length; j++) {
       let strToWrite = ''
+      let charToWrite = ' '
+      let tmp = ''
+
       if (i == 0) {
-        const tmp = ` | ${colsHeader[j]}`
+        tmp = ` | ${colsHeader[j]}`
         strToWrite = tmp
-        for (let k = 0; k < charsEachColumn[j]-tmp.length+3; k++) {
-          strToWrite += ' '
-        }
-        tableStr += strToWrite
       }
+
       if (i == 1) {
-        const tmp = ` |-`
+        charToWrite = '-'
+        tmp = ` |-`
         strToWrite = tmp
-        for (let k = 0; k < charsEachColumn[j]-tmp.length+3; k++) {
-          strToWrite += '-'
-        }
-        tableStr += strToWrite
       }
+      
       if (i >= 2) {
         const {timestamp, name, amount} = spendingLogs[i-2]
-        
-        const year = timestamp.getFullYear();
-        let month = timestamp.getMonth() + 1
-        month = ('0' + month).slice(-2);
-        let date = timestamp.getDate();
-        date = ('0' + date).slice(-2);
-
-        const spendingDate = `${year}-${month}-${date}`
+      
+        const spendingDate = formattedDateFromTimestamp(timestamp)
         const amountStr = `${amount}`
         const tmpArr = [spendingDate, name, amountStr]
 
-        const tmp = ` | ${tmpArr[j]}`
+        tmp = ` | ${tmpArr[j]}`
         strToWrite = tmp
-        for (let k = 0; k < charsEachColumn[j]-tmp.length+3; k++) {
-          strToWrite += ' '
-        }
-        tableStr += strToWrite
       }
+
+      for (let k = 0; k < charsEachColumn[j]-tmp.length+3; k++) {
+        strToWrite += charToWrite
+      }
+
+      tableStr += strToWrite
     }
     tableStr += '|\n'
   }
