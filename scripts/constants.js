@@ -146,10 +146,10 @@ const getTotalSpendingKeyboard = {
     ],
     [
       {
-        "text": "since 14 days ago",
-        "callback_data": getTotalSpendingCommand.Since14DaysAgo,
+        "text": "Since 14 days ago",
+        "callback_data":  getTotalSpendingCommand.Since14DaysAgo,
       }
-    ]
+    ],
     [
       {
         "text": "Since 30 days ago",
